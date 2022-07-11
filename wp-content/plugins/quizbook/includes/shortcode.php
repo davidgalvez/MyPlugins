@@ -12,6 +12,7 @@ function    quizbook_shortcode($atts){
     );
     
     $quizbook =new WP_Query($args);
+    ob_start();
     ?>
     <form name="quizbook_enviar" id="quizbook_enviar">
         <div id="quizbook" class="quizbook">
@@ -45,6 +46,8 @@ function    quizbook_shortcode($atts){
     </form><!--form quizbook_enviar -->
 
 <?php
+     $output = ob_get_clean();
+     return $output;
 }
 
 add_shortcode("quizbook", "quizbook_shortcode");
