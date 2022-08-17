@@ -18,14 +18,14 @@ wp-content/plugins/*
 
 #Ignore phpUnit testing files and folder
 wp-content/plugins/quizbook/vendor
-wp-content/plugins/quizbook/bin
-wp-content/plugins/quizbook/tests
+#wp-content/plugins/quizbook/bin
+#wp-content/plugins/quizbook/tests
 wp-content/plugins/quizbook/.phpcs.xml.dist
 wp-content/plugins/quizbook/.phpunit.result.cache
-wp-content/plugins/quizbook/.travis.yml
-wp-content/plugins/quizbook/composer.json
+#wp-content/plugins/quizbook/.travis.yml
+#wp-content/plugins/quizbook/composer.json
 wp-content/plugins/quizbook/composer.lock
-wp-content/plugins/quizbook/phpunit.xml.dist
+#wp-content/plugins/quizbook/phpunit.xml.dist
 
 # Ignore everything in the "themes" directory, except the themes you
 # specify (see the commented-out example for a hint on how to do this.)
