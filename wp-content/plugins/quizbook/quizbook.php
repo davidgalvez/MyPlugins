@@ -13,12 +13,15 @@ Text Domain:  quizbook
 
 require_once plugin_dir_path(__FILE__).'/includes/posttypes.php';
 require_once plugin_dir_path(__FILE__).'/includes/metaboxes.php';
+require_once plugin_dir_path(__FILE__).'/includes/roles.php';
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
 define("QUIZBOOK_METABOX_TITLE","Respuestas");
 define("QUIZBOOK_METABOX_TEMPLATE_PATH",plugin_dir_path(__FILE__)."assets/templates/quizbook-metabox.php");
 define("QUIZBOOK_METABOX_NONCE","quizbook_nonce");
+define("QUIZBOOK_ROLES_ROL_NAME","quizbook");
+define("QUIZBOOK_ROLES_DISPLAY_NAME","Quiz");
 
 /**
  * Clase principal del plugin para añadir preguntas con opciones multiples
@@ -27,14 +30,23 @@ class quizzbookPlugin
 {
 
   /**
-   * Postype object to be injected to the plugin
+   * objects to be injected to the plugin
    */
   private quizbookPostType $postType;
   private quizzbookMetabox $metaBox;
+  private quizbookRoles $roles;
 
-  function __construct(quizbookPostType $postType)
+  /**
+   * atributes of the plugin
+   */
+  private string $postypeName;
+  private string $roleName;
+  private string $roleDisplayName;
+
+  function __construct(string $postypeName, string $roleName, string $roleDisplayName)
   {
-    $this->postType = $postType;
+    $this->postType = new quizbookPostType($postypeName);
+    $this->roles = new quizbookRoles($roleName,$roleDisplayName);
   }
 
   /**
@@ -57,6 +69,38 @@ class quizzbookPlugin
   }
 
   /**
+   * Para crear el rol en la activacion del plugin
+   */
+  function createRol()
+  {    
+    $this->roles->createRol();
+  }
+
+  /**
+   * Para remover el rol creado por el plugin al desactivarlo
+   */
+  function removeRol()
+  {
+    $this->roles->removeRol();
+  }
+
+  /**
+   * Para crear los capabilities en la activacion del plugin
+   */
+  function addCapabilities()
+  {
+    $this->roles->addCapabilities();
+  }
+
+  /**
+   * Para remover los capabilities creados por el plugin al desactivarlo
+   */
+  function removeCapabilities()
+  {
+    $this->roles->removeCapabilities();
+  }
+
+  /**
    * Invoca al método para registrar el Posttype en el evento init de wordpress
    */
   function initPlugin()
@@ -65,11 +109,22 @@ class quizzbookPlugin
   }
 
   /**
-   * Regenera los permalinks al activar el plugin
+   * Registra los hooks que se ejecutaran al activar el plugin
    */
-  function registerActivationHook()
+  function registerActivationHooks()
   {
     register_activation_hook(__FILE__, array($this, 'rewriteFlushPostType'));
+    register_activation_hook(__FILE__, array($this, 'createRol'));
+    register_activation_hook(__FILE__, array($this, 'addCapabilities'));
+  }
+
+  /**
+   * Registra los hooks que se ejecutaran al desactivar el plugin
+   */
+  function registerDeactivationHooks()
+  {
+    register_deactivation_hook(__FILE__, array($this, 'removeRol'));
+    register_deactivation_hook(__FILE__, array($this, 'removeCapabilities'));
   }
 
   /**
@@ -102,31 +157,28 @@ class quizzbookPlugin
   function addSaveMetaBoxes(){
     add_action( 'save_post', array($this,'getSaveMetaBox'),10);
   }
+
+  
+
+  
 }
  
-$quizbookPostType = new quizbookPostType(QUIZBOOK_POSTTYPE_NAME);
-$quizbook = new quizzbookPlugin($quizbookPostType);
+$quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME);
 $quizbook->initPlugin();
-$quizbook->registerActivationHook();
 $quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
 $quizbook->addSaveMetaBoxes();
+$quizbook->registerActivationHooks();
 
-
-
-/**
- * Añade metaboxes a los quizes
- */
-//require_once plugin_dir_path(__FILE__).'/includes/metaboxes.php';
 
 /**
  * Añade roles y capabilities a los quizes
  */
-require_once plugin_dir_path(__FILE__).'/includes/roles.php';
+/*require_once plugin_dir_path(__FILE__).'/includes/roles.php';
 register_activation_hook(__FILE__, 'quizbook_crear_role');
 register_deactivation_hook(__FILE__, 'quizbook_remover_role');
 
 register_activation_hook(__FILE__,'quizbook_agregar_capabilities');
-register_deactivation_hook(__FILE__, 'quizbook_remover_capabilities');
+register_deactivation_hook(__FILE__, 'quizbook_remover_capabilities');*/
 
 /**
  * Añade un shortcode

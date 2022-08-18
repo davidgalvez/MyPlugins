@@ -54,6 +54,9 @@ class quizzbookMetabox{
         $this->priority=$priority;
     }
 
+    /**
+     * Devuelve todos los argumentos necesarios para agregar el metabox al plugin
+     */
     function getArguments()
     {
         return array(
@@ -97,6 +100,9 @@ class quizzbookMetabox{
         return $this->template;
     }
 
+    /**
+     * Obtiene el metodo Callback para renderizar el metabox, se usa como argumento al momento de agregar el metabox al plugin
+     */
     function getCallback()
     {
         return array($this,'renderTemplate');
