@@ -14,11 +14,18 @@ Text Domain:  quizbook
 require_once plugin_dir_path(__FILE__).'/includes/posttypes.php';
 require_once plugin_dir_path(__FILE__).'/includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__).'/includes/roles.php';
+require_once plugin_dir_path(__FILE__).'/includes/shortcode.php';
+require_once plugin_dir_path(__FILE__).'/includes/scripts.php';
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
 define("QUIZBOOK_METABOX_TITLE","Respuestas");
-define("QUIZBOOK_METABOX_TEMPLATE_PATH",plugin_dir_path(__FILE__)."assets/templates/quizbook-metabox.php");
+define("QUIZBOOK_ASSETS_BASE_PATH", plugin_dir_path(__FILE__)."assets/");
+define("QUIZBOOK_METABOX_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-metabox.php");
+define("QUIZBOOK_SHORTCODE_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-shortcode-tpl.php");
+define("QUIZBOOK_SCRIPTS_PATH",plugins_url('/quizbook/assets/js/quizbook.js', __FILE__));
+define("QUIZBOOK_CSS_FRONT_PATH",plugins_url('/assets/css/quizbook.css', __FILE__));
+define("QUIZBOOK_CSS_ADMIN_PATH",plugins_url('/assets/css/admin-quizbook.css', __FILE__));
 define("QUIZBOOK_METABOX_NONCE","quizbook_nonce");
 define("QUIZBOOK_ROLES_ROL_NAME","quizbook");
 define("QUIZBOOK_ROLES_DISPLAY_NAME","Quiz");
@@ -35,6 +42,8 @@ class quizzbookPlugin
   private quizbookPostType $postType;
   private quizzbookMetabox $metaBox;
   private quizbookRoles $roles;
+  private quizbookShortcode $shortcode;
+  private quizbookScripts $scripts;
 
   /**
    * atributes of the plugin
@@ -45,6 +54,9 @@ class quizzbookPlugin
 
   function __construct(string $postypeName, string $roleName, string $roleDisplayName)
   {
+    $this->postypeName=$postypeName;
+    $this->roleName=$roleName;
+    $this->$roleDisplayName=$roleDisplayName;
     $this->postType = new quizbookPostType($postypeName);
     $this->roles = new quizbookRoles($roleName,$roleDisplayName);
   }
@@ -146,7 +158,7 @@ class quizzbookPlugin
   /**
    * Invoca al metodo de guardar del metabox
    */
-  private function getSaveMetaBox(int $postID)
+  function getSaveMetaBox(int $postID)
   {
     $this->metaBox->saveMetabox($postID);
   }
@@ -158,8 +170,51 @@ class quizzbookPlugin
     add_action( 'save_post', array($this,'getSaveMetaBox'),10);
   }
 
-  
+  /**
+   * Asigna el parametro shorcode a una nueva instancia de la clase quizbookShortcode
+   */
+  function setShortcode(string $shortcodePath){
+    $this->shortcode= new quizbookShortcode($this->postypeName, $shortcodePath);
+    
+  }
 
+  /**
+   * Invoca al método para crear el shortcode
+   */
+  function createShortCode(array $attributes){
+    $this->shortcode->createShortcode($attributes);
+    
+  }
+
+  /**
+   * Registra el shortcode en el plugin
+   */
+  function registerShortcode(){
+    add_shortcode("quizbook", array($this->shortcode, "createShortCode"));
+  }
+
+  /**
+   * Asigna el parametro scripts a una instancia de la clase postypeScripts
+   */
+  function setScripts(string $jsFilePath, string $cssFrontPath, string $cssAdminPath){
+    $this->scripts= new quizbookScripts($this->postypeName, $jsFilePath, $cssFrontPath, $cssAdminPath);
+  }
+
+  /**
+   * Registra los scripts del front end para el plugin
+   */
+  function addActionRegisterFrontEndScripts()
+  {
+    add_action('wp_enqueue_scripts', array($this->scripts,'addFrontJsCssFiles'));
+  }
+
+  /**
+   * Registra los scripts del admin para el plugin
+   */
+  function addActionRegisterAdminScripts()
+  {
+    add_action('admin_enqueue_scripts', array($this->scripts,'addAdminJsCssFiles'));
+  }
   
 }
  
@@ -168,32 +223,20 @@ $quizbook->initPlugin();
 $quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
 $quizbook->addSaveMetaBoxes();
 $quizbook->registerActivationHooks();
+$quizbook->registerDeactivationHooks();
+$quizbook->setShortcode(QUIZBOOK_SHORTCODE_TEMPLATE_PATH);
+$quizbook->registerShortcode();
+$quizbook->setScripts(QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH,QUIZBOOK_CSS_ADMIN_PATH);
+$quizbook->addActionRegisterAdminScripts();
+$quizbook->addActionRegisterFrontEndScripts();
 
 
-/**
- * Añade roles y capabilities a los quizes
- */
-/*require_once plugin_dir_path(__FILE__).'/includes/roles.php';
-register_activation_hook(__FILE__, 'quizbook_crear_role');
-register_deactivation_hook(__FILE__, 'quizbook_remover_role');
 
-register_activation_hook(__FILE__,'quizbook_agregar_capabilities');
-register_deactivation_hook(__FILE__, 'quizbook_remover_capabilities');*/
-
-/**
- * Añade un shortcode
- */
-require_once plugin_dir_path(__FILE__).'/includes/shortcode.php';
 
 /**
  * Añade archivo de funciones
  */
 require_once plugin_dir_path(__FILE__).'/includes/funciones.php';
-
-/**
- * Añade hojas de estilo y archivos js
- */
-require_once plugin_dir_path(__FILE__).'/includes/scripts.php';
 
 /**
  * Devuelve los resultados del examen

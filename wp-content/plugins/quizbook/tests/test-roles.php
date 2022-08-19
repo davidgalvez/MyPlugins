@@ -17,8 +17,7 @@ class TestQuizbookRoles extends WP_UnitTestCase {
        
     }
 	public function testSetRolName() 
-	{   
-        //$this->QuizbookRoles->createRol();             	
+	{                       	
 		$this->assertEquals( $this->QuizbookRoles->getRolName(), QUIZBOOK_ROLES_ROL_NAME, 'Rol names doesnt match' );
 	}
     public function testSetRolDisplayName()

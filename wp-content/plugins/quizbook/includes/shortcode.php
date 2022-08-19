@@ -1,55 +1,47 @@
 <?php
 if(! defined('ABSPATH')) exit();
 
-/**
- * Crea un shortcode, uso [quizbook preguntas="" orden=""]
- */
-function    quizbook_shortcode($atts){
-    $args = array(
-        'post_type' => 'quizes',
-        'posts_per_page' => $atts["preguntas"],
-        'orderby' => $atts["orden"]
-    );
-    
-    $quizbook =new WP_Query($args);
-    ob_start();
-    ?>
-    <form name="quizbook_enviar" id="quizbook_enviar">
-        <div id="quizbook" class="quizbook">
-            <ul>
-                <?php while($quizbook->have_posts()): $quizbook->the_post(); ?>
-                <li >
-                    <?php the_title("<h2>", "</h2>"); ?>
-                    <?php the_content();?>
-                    <?php 
-                        $opciones=get_post_meta(get_the_ID());
-                        foreach($opciones as $llave=>$opcion){
-                            $resultado=quizbook_filtrar_preguntas($llave);
-                            if($resultado===0){
-                                $nro_opcion=explode('_',$llave);
-                    ?>
-                            <div id="<?php echo get_the_ID().":".$nro_opcion[2]; ?>" class="respuesta"><?php echo $opcion[0]; ?></div>
-                    <?php
-                            }
-                        } 
+class quizbookShortcode{
+    private string $posttype;
+    private string $templatePath;
+    //private array $attributes;
 
-                    ?>
-                    
-                </li>            
-                <?php endwhile; wp_reset_postdata(); ?>
-            </ul>            
-        </div>
-        <input type="submit" value="Enviar" id="quizbook_btn_submit">
+    function __construct(string $posttype, string $templatePath)
+    {
+        $this->posttype=$posttype;
+        $this->templatePath=$templatePath;        
+    }
 
-        <div id="quizbook_resultado"></div>
+     /**
+     * Crea un shortcode, uso [quizbook preguntas="" orden=""]
+     */
+    function createShortcode($attributes){
+        $args = array(
+            'post_type' => $this->posttype,
+            'posts_per_page' => $attributes["preguntas"],
+            'orderby' => $attributes["orden"]
+        );
+        
+        $quizbook =new WP_Query($args);
+        ob_start();
+        //$output= "Funciona";
+        $this->renderTemplate($quizbook);
 
-    </form><!--form quizbook_enviar -->
+        $output = ob_get_clean();
+        return $output;
+    }
 
-<?php
-     $output = ob_get_clean();
-     return $output;
+    function renderTemplate(WP_Query $quizbook){
+        include $this->templatePath;
+    }
+
+    function getTemplatePath(){
+        return $this->templatePath;
+    }
+
+    function getPosttype(){
+        return $this->posttype;
+    }
 }
-
-add_shortcode("quizbook", "quizbook_shortcode");
 
 ?>
