@@ -28,11 +28,12 @@
             data: datos
         }).done(function(respuesta){
             var clase;
-            if(respuesta.total>60){
+            clase = respuesta.mensaje;
+            /*if(respuesta.total>60){
                 clase="aprobado";
             }else{
                 clase="desaprobado";
-            }
+            }*/
 
             $("#quizbook_resultado").append('Total: '+respuesta.total).addClass(clase);
             $("#quizbook_btn_submit").remove();

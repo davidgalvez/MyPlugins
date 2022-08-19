@@ -16,6 +16,8 @@ require_once plugin_dir_path(__FILE__).'/includes/metaboxes.php';
 require_once plugin_dir_path(__FILE__).'/includes/roles.php';
 require_once plugin_dir_path(__FILE__).'/includes/shortcode.php';
 require_once plugin_dir_path(__FILE__).'/includes/scripts.php';
+require_once plugin_dir_path(__FILE__).'/includes/resultados.php';
+require_once plugin_dir_path(__FILE__).'/includes/funciones.php';
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
@@ -23,12 +25,15 @@ define("QUIZBOOK_METABOX_TITLE","Respuestas");
 define("QUIZBOOK_ASSETS_BASE_PATH", plugin_dir_path(__FILE__)."assets/");
 define("QUIZBOOK_METABOX_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-metabox.php");
 define("QUIZBOOK_SHORTCODE_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-shortcode-tpl.php");
-define("QUIZBOOK_SCRIPTS_PATH",plugins_url('/quizbook/assets/js/quizbook.js', __FILE__));
+define("QUIZBOOK_SCRIPTS_PATH",plugins_url('/assets/js/quizbook.js', __FILE__));
 define("QUIZBOOK_CSS_FRONT_PATH",plugins_url('/assets/css/quizbook.css', __FILE__));
 define("QUIZBOOK_CSS_ADMIN_PATH",plugins_url('/assets/css/admin-quizbook.css', __FILE__));
 define("QUIZBOOK_METABOX_NONCE","quizbook_nonce");
 define("QUIZBOOK_ROLES_ROL_NAME","quizbook");
 define("QUIZBOOK_ROLES_DISPLAY_NAME","Quiz");
+define("QUIZBOOK_MINIMUN_SCORE",60);
+define("QUIZBOOK_MIN_VALID_SCORE",0);
+define("QUIZBOOK_MAX_VALID_SCORE",100);
 
 /**
  * Clase principal del plugin para añadir preguntas con opciones multiples
@@ -44,6 +49,7 @@ class quizzbookPlugin
   private quizbookRoles $roles;
   private quizbookShortcode $shortcode;
   private quizbookScripts $scripts;
+  private quizbookAjaxResults $ajaxResults;
 
   /**
    * atributes of the plugin
@@ -51,14 +57,15 @@ class quizzbookPlugin
   private string $postypeName;
   private string $roleName;
   private string $roleDisplayName;
+  private int $minimunScore;
 
   function __construct(string $postypeName, string $roleName, string $roleDisplayName)
   {
     $this->postypeName=$postypeName;
-    $this->roleName=$roleName;
+    $this->roleName=$roleName;    
     $this->$roleDisplayName=$roleDisplayName;
     $this->postType = new quizbookPostType($postypeName);
-    $this->roles = new quizbookRoles($roleName,$roleDisplayName);
+    $this->roles = new quizbookRoles($roleName,$roleDisplayName);   
   }
 
   /**
@@ -215,10 +222,22 @@ class quizzbookPlugin
   {
     add_action('admin_enqueue_scripts', array($this->scripts,'addAdminJsCssFiles'));
   }
+
+  /**
+   * Asigna el parametro ajaxresults a una instancia de la clase quizbookAjaxResults
+   */
+  function setAjaxResults(int $minimunScore, int $minvalidScore, int $maxValidScore){
+    $this->ajaxResults= new quizbookAjaxResults($minimunScore,$minvalidScore, $maxValidScore);
+  }
+
+  function addActionAjaxQuizbookResultados(){
+    add_action( 'wp_ajax_nopriv_quizbook_resultados', array($this->ajaxResults,'getQuizbookResult')); //hook ajax cuando estas logueado
+    add_action( 'wp_ajax_quizbook_resultados', array($this->ajaxResults,'getQuizbookResult'));//hook ajax cuando no estas logueado
+  }
   
 }
  
-$quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME);
+$quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME, QUIZBOOK_MINIMUN_SCORE);
 $quizbook->initPlugin();
 $quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
 $quizbook->addSaveMetaBoxes();
@@ -229,18 +248,9 @@ $quizbook->registerShortcode();
 $quizbook->setScripts(QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH,QUIZBOOK_CSS_ADMIN_PATH);
 $quizbook->addActionRegisterAdminScripts();
 $quizbook->addActionRegisterFrontEndScripts();
+$quizbook->setAjaxResults(QUIZBOOK_MINIMUN_SCORE,QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
+$quizbook->addActionAjaxQuizbookResultados();
 
 
-
-
-/**
- * Añade archivo de funciones
- */
-require_once plugin_dir_path(__FILE__).'/includes/funciones.php';
-
-/**
- * Devuelve los resultados del examen
- */
-require_once plugin_dir_path(__FILE__).'/includes/resultados.php';
 
 ?>

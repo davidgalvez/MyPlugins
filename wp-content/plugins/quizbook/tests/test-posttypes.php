@@ -13,7 +13,7 @@ class TestQuizbookPosttypes extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookPosttype= new quizbookPostType('quizes');
+		$this->QuizbookPosttype= new quizbookPostType(QUIZBOOK_POSTTYPE_NAME);
        
     }
 	public function testPostTypeSetLabels() 

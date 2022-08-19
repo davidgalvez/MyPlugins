@@ -14,7 +14,7 @@ class TestQuizbook extends WP_UnitTestCase {
     {
 		parent::setUp();
 
-        $this->Quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME);
+        $this->Quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME, QUIZBOOK_MINIMUN_SCORE);
     }
 	public function testPosttypeQuizezIsCreated() 
 	{
