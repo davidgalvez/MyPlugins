@@ -5,6 +5,8 @@
  * @package Quizbook
  */
 
+use Quizbook\Metabox;
+
 /**
  * Test logic of Metaboxes class
  */
@@ -13,7 +15,7 @@ class TestQuizbookMetaboxes extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookMetabox=new quizzbookMetabox(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE,QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);        
+		$this->QuizbookMetabox=new Metabox(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE,QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);        
        
     }
 	public function testSetId() 

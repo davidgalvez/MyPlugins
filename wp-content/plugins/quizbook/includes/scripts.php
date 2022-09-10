@@ -1,10 +1,14 @@
 <?php
+/**
+ * @package Quizbook
+ */
+namespace Quizbook;
 if(! defined('ABSPATH')) exit();
 
 /**
  * Class to admin scripts and styles of the plugin
  */
-class quizbookScripts
+class Scripts
 {
     private string $posttype;
     private string $jsFilePath;
@@ -75,30 +79,3 @@ class quizbookScripts
     }
 }
 
-/*
-function quizbook_frontend_styles(){
-    wp_enqueue_style( 'quizbook_css', plugins_url('../assets/css/quizbook.css', __FILE__));
-    wp_enqueue_script( 'quizbook_js', plugins_url('../assets/js/quizbook.js', __FILE__),array('jquery'), 1.0, true);
-    wp_localize_script('quizbook_js','admin_url',  array(
-        'ajax_url' => admin_url('admin-ajax.php')
-    ));
-}
-
-add_action( 'wp_enqueue_scripts', 'quizbook_frontend_styles');
-
-
-function quizbook_admin_styles($hook){
-
-    global $post;
-
-    if($hook == 'post-new.php' || $hook == 'post.php'){
-        if($post->posst_type==='quizbook'){
-            wp_enqueue_style( 'quizbookcss', plugins_url('../assets/css/admin-quizbook.css', __FILE__) );
-        }        
-    }
-    
-
-}
-
-add_action('admin_enqueue_scripts', 'quizbook_admin_styles');
-*/

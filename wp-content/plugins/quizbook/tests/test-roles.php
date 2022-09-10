@@ -5,6 +5,8 @@
  * @package Quizbook
  */
 
+use Quizbook\Rol;
+
 /**
  * Test logic of Roles class
  */
@@ -13,7 +15,7 @@ class TestQuizbookRoles extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookRoles=new quizbookRoles(QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME);      
+		$this->QuizbookRoles=new Rol(QUIZBOOK_ROLES_ROL_NAME,QUIZBOOK_ROLES_DISPLAY_NAME);      
        
     }
 	public function testSetRolName() 

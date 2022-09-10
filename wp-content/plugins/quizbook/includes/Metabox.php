@@ -1,10 +1,16 @@
 <?php
-
+/**
+ * @package Quizbook
+ */
 use function PHPUnit\Framework\isReadable;
+namespace Quizbook;
 
 if(! defined('ABSPATH')) exit();
-
-class quizzbookMetabox{
+use \WP_Post;
+/**
+ * Definición de los argumentos y etiquetas del postype a registrar en el plugin
+ */
+class Metabox{
     /**
      * Nombre unico del metabox
      * 

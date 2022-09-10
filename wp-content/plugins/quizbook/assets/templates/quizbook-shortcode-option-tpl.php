@@ -1,0 +1,1 @@
+<div id="<?php echo get_the_ID().":".$letraOpcion; ?>" class="respuesta"><?php echo $textoOpcion; ?></div>

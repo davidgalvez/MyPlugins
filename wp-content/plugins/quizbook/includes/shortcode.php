@@ -1,7 +1,12 @@
 <?php
+/**
+ * @package Quizbook
+ */
+namespace Quizbook;
+use \WP_Query;
 if(! defined('ABSPATH')) exit();
 
-class quizbookShortcode{
+class Shortcode{
     private string $posttype;
     private string $templatePath;
     //private array $attributes;
@@ -24,7 +29,7 @@ class quizbookShortcode{
         
         $quizbook =new WP_Query($args);
         ob_start();
-        //$output= "Funciona";
+        
         $this->renderTemplate($quizbook);
 
         $output = ob_get_clean();
@@ -32,7 +37,7 @@ class quizbookShortcode{
     }
 
     function renderTemplate(WP_Query $quizbook){
-        include $this->templatePath;
+        include $this->templatePath;        
     }
 
     function getTemplatePath(){

@@ -4,7 +4,7 @@
  *
  * @package Quizbook
  */
-
+use Quizbook\Shortcode;
 /**
  * Test logic of Shortcode class
  */
@@ -13,7 +13,7 @@ class TestQuizbookShortcode extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookShortcode=new quizbookShortcode(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_SHORTCODE_TEMPLATE_PATH);        
+		$this->QuizbookShortcode=new Shortcode(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_SHORTCODE_TEMPLATE_PATH);        
        
     }
 	

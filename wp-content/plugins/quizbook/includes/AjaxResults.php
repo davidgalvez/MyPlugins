@@ -1,7 +1,11 @@
 <?php
+/**
+ * @package Quizbook
+ */
+namespace Quizbook;
 if(! defined('ABSPATH')) exit();
 
-class quizbookAjaxResults{
+class AjaxResults{
 
     private int $notaMinima;
     private int $notaMinimaValida;
@@ -65,7 +69,7 @@ class quizbookAjaxResults{
     }
 
     /**
-     * Verifica si el usuario a aprobado el quizz
+     * Verifica si el usuario ha superado la calificación minima para aprobar y devuelve el mensaje "aprobado" si ha superado la nota mínima y "desaprobado" si no la ha superado
      */
     function messageAproved(float $resultado){
         return ($resultado>=$this->notaMinima)?"aprobado":"desaprobado";
@@ -97,7 +101,7 @@ class quizbookAjaxResults{
     }
 
     /**
-     * Obtiene la respuesta corecta correspondienta al postID
+     * Obtiene la respuesta correcta correspondienta al postID
      */
     function getCorrectAnswer(int $postID){
         /**
@@ -152,45 +156,3 @@ class quizbookAjaxResults{
         return $result["postID"];
     }
 }
-
-/*
-function quizbook_resultados(){
-
-    if(isset($_POST['data'])){
-        $respuestas=$_POST['data'];
-    }
-
-    $resultado=0;
-
-    foreach($respuestas as $resp){
-        $pregunta=explode(':', $resp);
-
-        
-        $post_id=$pregunta[0];
-        $respuesta_usuario=$pregunta[1];
-
-         $correcta = get_post_meta($post_id, 'quizbook_correcta', true);
-
-         $letra_correcta=explode(':',$correcta);
-
-        
-          $respuesta_correcta=$letra_correcta[1];
-
-          if($respuesta_usuario===$respuesta_correcta){
-              $resultado+=20;
-          }
-
-    }
-
-    $respuesta=array(
-        'total' => $resultado
-    );
-    header('content-type: application/json');
-    echo json_encode($respuesta);
-    die();
-}
-
-
-add_action( 'wp_ajax_nopriv_quizbook_resultados', 'quizbook_resultados'); //hook ajax cuando estas logueado
-add_action( 'wp_ajax_quizbook_resultados', 'quizbook_resultados');//hook ajax cuando no estas logueado
-*/

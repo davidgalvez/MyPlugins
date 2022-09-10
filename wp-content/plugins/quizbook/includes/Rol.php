@@ -1,9 +1,13 @@
 <?php
+/**
+ * @package Quizbook
+ */
+namespace Quizbook;
 if(! defined('ABSPATH')) exit();
 /**
  * Clase para crear y remover roles
  */
-class quizbookRoles{
+class Rol{
 
 	private string $rolName;
 	private string $displayName;

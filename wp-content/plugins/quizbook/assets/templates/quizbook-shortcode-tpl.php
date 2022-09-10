@@ -8,13 +8,7 @@
                     <?php 
                         $opciones=get_post_meta(get_the_ID());
                         foreach($opciones as $llave=>$opcion){
-                            $resultado=quizbook_filtrar_preguntas($llave);
-                            if($resultado===0){
-                                $nro_opcion=explode('_',$llave);
-                    ?>
-                            <div id="<?php echo get_the_ID().":".$nro_opcion[2]; ?>" class="respuesta"><?php echo $opcion[0]; ?></div>
-                    <?php
-                            }
+                           \Quizbook\ShortCodeRender::renderOpcionIfQuizbook($llave,$opcion);
                         } 
 
                     ?>

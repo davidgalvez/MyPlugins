@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class Quizbook
+ *
+ * @package Quizbook
+ */
 /*
 Plugin Name:  Quiz Book
 Plugin URI:
@@ -10,14 +15,19 @@ License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain:  quizbook
  */
+defined('ABSPATH') or die("Acceso restringido");
 
-require_once plugin_dir_path(__FILE__).'/includes/posttypes.php';
-require_once plugin_dir_path(__FILE__).'/includes/metaboxes.php';
-require_once plugin_dir_path(__FILE__).'/includes/roles.php';
-require_once plugin_dir_path(__FILE__).'/includes/shortcode.php';
-require_once plugin_dir_path(__FILE__).'/includes/scripts.php';
-require_once plugin_dir_path(__FILE__).'/includes/resultados.php';
-require_once plugin_dir_path(__FILE__).'/includes/funciones.php';
+if(file_exists(dirname(__FILE__)."/vendor/autoload.php"))
+{
+  require_once(dirname(__FILE__)."/vendor/autoload.php");
+}
+use \Quizbook\PostType;
+use \Quizbook\Metabox;
+use \Quizbook\Rol;
+use \Quizbook\Shortcode;
+use \Quizbook\Scripts;
+use \Quizbook\AjaxResults;
+use \Quizbook\ShortCodeRender;
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
@@ -36,6 +46,20 @@ define("QUIZBOOK_MIN_VALID_SCORE",0);
 define("QUIZBOOK_MAX_VALID_SCORE",100);
 
 /**
+ * Metodo que se ejecuta en la activación del plugin
+ */
+function activar_quizbook_plugin() {
+	Quizbook\Activate::activate();
+}
+
+/**
+ * Metodo que se ejecuta en la desactivación del plugin
+ */
+function desactivar_xcodecMad_plugin() {
+	Quizbook\Deactivate::deactivate();
+}
+
+/**
  * Clase principal del plugin para añadir preguntas con opciones multiples
  */
 class quizzbookPlugin
@@ -44,12 +68,12 @@ class quizzbookPlugin
   /**
    * objects to be injected to the plugin
    */
-  private quizbookPostType $postType;
-  private quizzbookMetabox $metaBox;
-  private quizbookRoles $roles;
-  private quizbookShortcode $shortcode;
-  private quizbookScripts $scripts;
-  private quizbookAjaxResults $ajaxResults;
+  private PostType $postType;
+  private Metabox $metaBox;
+  private Rol $roles;
+  private Shortcode $shortcode;
+  private Scripts $scripts;
+  private AjaxResults $ajaxResults;
 
   /**
    * atributes of the plugin
@@ -64,8 +88,8 @@ class quizzbookPlugin
     $this->postypeName=$postypeName;
     $this->roleName=$roleName;    
     $this->$roleDisplayName=$roleDisplayName;
-    $this->postType = new quizbookPostType($postypeName);
-    $this->roles = new quizbookRoles($roleName,$roleDisplayName);   
+    $this->postType = new PostType($postypeName);
+    $this->roles = new Rol($roleName,$roleDisplayName);   
   }
 
   /**
@@ -158,7 +182,7 @@ class quizzbookPlugin
    * Asocia la accion add_meta_boxes al metodo para registrar el metabox
    */
   function addMetaBoxes(string $metaboxId, string $metaboxTitle, string $metaboxTemplatePath, string $metaboxNonce){
-    $this->metaBox=new quizzbookMetabox($metaboxId, $metaboxTitle, $metaboxTemplatePath, $metaboxNonce); 
+    $this->metaBox=new Metabox($metaboxId, $metaboxTitle, $metaboxTemplatePath, $metaboxNonce); 
     add_action( 'add_meta_boxes', array($this,'addMetaBox'));
   }
 
@@ -181,7 +205,7 @@ class quizzbookPlugin
    * Asigna el parametro shorcode a una nueva instancia de la clase quizbookShortcode
    */
   function setShortcode(string $shortcodePath){
-    $this->shortcode= new quizbookShortcode($this->postypeName, $shortcodePath);
+    $this->shortcode= new Shortcode($this->postypeName, $shortcodePath);
     
   }
 
@@ -204,7 +228,7 @@ class quizzbookPlugin
    * Asigna el parametro scripts a una instancia de la clase postypeScripts
    */
   function setScripts(string $jsFilePath, string $cssFrontPath, string $cssAdminPath){
-    $this->scripts= new quizbookScripts($this->postypeName, $jsFilePath, $cssFrontPath, $cssAdminPath);
+    $this->scripts= new Scripts($this->postypeName, $jsFilePath, $cssFrontPath, $cssAdminPath);
   }
 
   /**
@@ -227,7 +251,7 @@ class quizzbookPlugin
    * Asigna el parametro ajaxresults a una instancia de la clase quizbookAjaxResults
    */
   function setAjaxResults(int $minimunScore, int $minvalidScore, int $maxValidScore){
-    $this->ajaxResults= new quizbookAjaxResults($minimunScore,$minvalidScore, $maxValidScore);
+    $this->ajaxResults= new AjaxResults($minimunScore,$minvalidScore, $maxValidScore);
   }
 
   function addActionAjaxQuizbookResultados(){

@@ -4,7 +4,7 @@
  *
  * @package Quizbook
  */
-
+use \Quizbook\AjaxResults;
 /**
  * Test the main logic of Quizbook plugin
  */
@@ -13,7 +13,7 @@ class TestQuizbookAjaxResults extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookAjaxResults= new quizbookAjaxResults(QUIZBOOK_MINIMUN_SCORE, QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
+		$this->QuizbookAjaxResults= new AjaxResults(QUIZBOOK_MINIMUN_SCORE, QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
        
     }
 	public function testSetNotaMinima() 

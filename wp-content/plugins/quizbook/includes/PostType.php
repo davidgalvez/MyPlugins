@@ -1,13 +1,17 @@
 <?php
+/**
+ * @package Quizbook
+ */
 
 use function PHPUnit\Framework\returnSelf;
+namespace Quizbook;
 
 if(! defined('ABSPATH')) exit();
 
 /**
  * Definición de los argumentos y etiquetas del postype a registrar en el plugin
  */
-class quizbookPostType{
+class PostType{
     /**
      * Arreglo de etiquetas para el posttype
      */

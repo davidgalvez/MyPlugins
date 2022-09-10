@@ -4,7 +4,7 @@
  *
  * @package Quizbook
  */
-
+use \Quizbook\PostType;
 /**
  * Test the main logic of Quizbook plugin
  */
@@ -13,7 +13,7 @@ class TestQuizbookPosttypes extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookPosttype= new quizbookPostType(QUIZBOOK_POSTTYPE_NAME);
+		$this->QuizbookPosttype= new PostType(QUIZBOOK_POSTTYPE_NAME);
        
     }
 	public function testPostTypeSetLabels() 
