@@ -23,11 +23,11 @@ if(file_exists(dirname(__FILE__)."/vendor/autoload.php"))
 }
 use \Quizbook\PostType;
 use \Quizbook\Metabox;
-use \Quizbook\Rol;
 use \Quizbook\Shortcode;
 use \Quizbook\Scripts;
 use \Quizbook\AjaxResults;
-use \Quizbook\ShortCodeRender;
+use Quizbook\Activate;
+use Quizbook\Deactivate;
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
@@ -49,15 +49,19 @@ define("QUIZBOOK_MAX_VALID_SCORE",100);
  * Metodo que se ejecuta en la activación del plugin
  */
 function activar_quizbook_plugin() {
-	Quizbook\Activate::activate();
+  $activate=new Activate();
+	$activate->activate();
 }
 
 /**
  * Metodo que se ejecuta en la desactivación del plugin
  */
-function desactivar_xcodecMad_plugin() {
-	Quizbook\Deactivate::deactivate();
+function desactivar_quizbook_plugin() {
+  $deactivate=new Deactivate();
+	$deactivate->deactivate();
 }
+register_activation_hook(__FILE__,'activar_quizbook_plugin');
+register_deactivation_hook(__FILE__,'desactivar_quizbook_plugin');
 
 /**
  * Clase principal del plugin para añadir preguntas con opciones multiples
@@ -70,7 +74,6 @@ class quizzbookPlugin
    */
   private PostType $postType;
   private Metabox $metaBox;
-  private Rol $roles;
   private Shortcode $shortcode;
   private Scripts $scripts;
   private AjaxResults $ajaxResults;
@@ -79,17 +82,12 @@ class quizzbookPlugin
    * atributes of the plugin
    */
   private string $postypeName;
-  private string $roleName;
-  private string $roleDisplayName;
   private int $minimunScore;
 
-  function __construct(string $postypeName, string $roleName, string $roleDisplayName)
+  function __construct(string $postypeName)
   {
-    $this->postypeName=$postypeName;
-    $this->roleName=$roleName;    
-    $this->$roleDisplayName=$roleDisplayName;
-    $this->postType = new PostType($postypeName);
-    $this->roles = new Rol($roleName,$roleDisplayName);   
+    $this->postypeName=$postypeName;  
+    $this->postType = new PostType($postypeName);  
   }
 
   /**
@@ -104,71 +102,12 @@ class quizzbookPlugin
   }
 
   /**
-   * Limpia los rewriete rules en la activacion del plugin
-   */
-  function rewriteFlushPostType()
-  {
-    $this->postType->rewriteFlushPostype();
-  }
-
-  /**
-   * Para crear el rol en la activacion del plugin
-   */
-  function createRol()
-  {    
-    $this->roles->createRol();
-  }
-
-  /**
-   * Para remover el rol creado por el plugin al desactivarlo
-   */
-  function removeRol()
-  {
-    $this->roles->removeRol();
-  }
-
-  /**
-   * Para crear los capabilities en la activacion del plugin
-   */
-  function addCapabilities()
-  {
-    $this->roles->addCapabilities();
-  }
-
-  /**
-   * Para remover los capabilities creados por el plugin al desactivarlo
-   */
-  function removeCapabilities()
-  {
-    $this->roles->removeCapabilities();
-  }
-
-  /**
    * Invoca al método para registrar el Posttype en el evento init de wordpress
    */
   function initPlugin()
   {
     add_action('init', array($this, 'registerPostType'));
-  }
-
-  /**
-   * Registra los hooks que se ejecutaran al activar el plugin
-   */
-  function registerActivationHooks()
-  {
-    register_activation_hook(__FILE__, array($this, 'rewriteFlushPostType'));
-    register_activation_hook(__FILE__, array($this, 'createRol'));
-    register_activation_hook(__FILE__, array($this, 'addCapabilities'));
-  }
-
-  /**
-   * Registra los hooks que se ejecutaran al desactivar el plugin
-   */
-  function registerDeactivationHooks()
-  {
-    register_deactivation_hook(__FILE__, array($this, 'removeRol'));
-    register_deactivation_hook(__FILE__, array($this, 'removeCapabilities'));
-  }
+  }  
 
   /**
    * agrega el metabox al plugin
@@ -265,8 +204,6 @@ $quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_ROLES_ROL_NAME,Q
 $quizbook->initPlugin();
 $quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
 $quizbook->addSaveMetaBoxes();
-$quizbook->registerActivationHooks();
-$quizbook->registerDeactivationHooks();
 $quizbook->setShortcode(QUIZBOOK_SHORTCODE_TEMPLATE_PATH);
 $quizbook->registerShortcode();
 $quizbook->setScripts(QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH,QUIZBOOK_CSS_ADMIN_PATH);
@@ -274,7 +211,4 @@ $quizbook->addActionRegisterAdminScripts();
 $quizbook->addActionRegisterFrontEndScripts();
 $quizbook->setAjaxResults(QUIZBOOK_MINIMUN_SCORE,QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
 $quizbook->addActionAjaxQuizbookResultados();
-
-
-
 ?>

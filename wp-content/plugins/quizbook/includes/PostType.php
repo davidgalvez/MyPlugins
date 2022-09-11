@@ -67,8 +67,7 @@ class PostType{
     }
 
     function rewriteFlushPostype(){
-        //$this->registerPostype($this->postype);
-	    flush_rewrite_rules();
+       	    flush_rewrite_rules();
     }
 
     /**

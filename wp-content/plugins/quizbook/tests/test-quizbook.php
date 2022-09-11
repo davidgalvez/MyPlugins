@@ -18,8 +18,7 @@ class TestQuizbook extends WP_UnitTestCase {
     }
 	public function testPosttypeQuizezIsCreated() 
 	{
-		$this->Quizbook->initPlugin();
-		$this->Quizbook->rewriteFlushPostType();		
+		$this->Quizbook->initPlugin();				
 		$this->assertTrue( post_type_exists( QUIZBOOK_POSTTYPE_NAME ) );
 	}
 	public function testMetaboxesCreated() 
