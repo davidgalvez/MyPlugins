@@ -63,18 +63,20 @@ class quizzbookPlugin
     public Metabox $metaBox;
     public Shortcode $shortcode;
     public EnqueueScripts $enqueueScripts;
-    private AjaxResults $ajaxResults;
+    public AjaxResults $ajaxResults;
 
     /**
      * atributes of the plugin
      */
-    private string $postypeName;
-    private int $minimunScore;
+    private string $postypeName;    
     private array $metaboxArgs;
     private string $shortcodePath; 
     private string $jsFilePath; 
     private string $cssFrontPath; 
     private string $cssBackPath; 
+    private int $minimunScore;
+    private int $minValidScore;
+    private int $maxValidScore;
 
     function __construct()
     {
@@ -83,24 +85,16 @@ class quizzbookPlugin
       $this->shortcodePath=QUIZBOOK_SHORTCODE_TEMPLATE_PATH; 
       $this->jsFilePath=QUIZBOOK_SCRIPTS_PATH;
       $this->cssFrontPath=QUIZBOOK_CSS_FRONT_PATH;
-      $this->cssBackPath=QUIZBOOK_CSS_ADMIN_PATH;     
+      $this->cssBackPath=QUIZBOOK_CSS_ADMIN_PATH;  
+      $this->minimunScore=QUIZBOOK_MINIMUN_SCORE;
+      $this->minValidScore=QUIZBOOK_MIN_VALID_SCORE;
+      $this->maxValidScore=QUIZBOOK_MAX_VALID_SCORE;   
       $this->postType = new PostType($this->postypeName);  
       $this->metaBox=new Metabox($this->metaboxArgs); 
       $this->shortcode= new Shortcode($this->postypeName, $this->shortcodePath);
       $this->enqueueScripts = new EnqueueScripts($this->postypeName,$this->jsFilePath,$this->cssFrontPath,$this->cssBackPath);
-    }       
-
-    /**
-     * Asigna el parametro ajaxresults a una instancia de la clase quizbookAjaxResults
-     */
-    function setAjaxResults(int $minimunScore, int $minvalidScore, int $maxValidScore){
-      $this->ajaxResults= new AjaxResults($minimunScore,$minvalidScore, $maxValidScore);
-    }
-
-    function addActionAjaxQuizbookResultados(){
-      add_action( 'wp_ajax_nopriv_quizbook_resultados', array($this->ajaxResults,'getQuizbookResult')); //hook ajax cuando estas logueado
-      add_action( 'wp_ajax_quizbook_resultados', array($this->ajaxResults,'getQuizbookResult'));//hook ajax cuando no estas logueado
-    }
+      $this->ajaxResults= new AjaxResults($this->minimunScore,$this->minValidScore,$this->maxValidScore);
+    } 
     
 }
  
@@ -109,6 +103,5 @@ $quizbook->postType->addToPlugin();
 $quizbook->metaBox->addToPlugin();
 $quizbook->shortcode->addToPlugin();
 $quizbook->enqueueScripts->addToPlugin();
-$quizbook->setAjaxResults(QUIZBOOK_MINIMUN_SCORE,QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
-$quizbook->addActionAjaxQuizbookResultados();
+$quizbook->ajaxResults->addToPlugin();
 ?>

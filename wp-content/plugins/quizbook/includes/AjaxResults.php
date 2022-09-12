@@ -16,6 +16,15 @@ class AjaxResults{
         $this->notaMaximaValida=$notaMaximaValida;
         $this->notaMinima=$this->setValidNotaMinima($notaMinima);
     }
+
+    /**
+     * Add method of calculation of quiz results to actions for loged and not logged users
+     */
+    public function addToPlugin()
+    {
+        add_action( 'wp_ajax_nopriv_quizbook_resultados', array($this,'getQuizbookResult')); //hook ajax cuando estas logueado
+        add_action( 'wp_ajax_quizbook_resultados', array($this,'getQuizbookResult'));//hook ajax cuando no estas logueado
+    }
     /**
      * Recibe las respuestas marcadas por el usuario por medio quizbook.js y devuelve el resultado por medio de Ajax
      */
