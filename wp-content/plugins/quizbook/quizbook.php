@@ -59,7 +59,7 @@ class quizzbookPlugin
     /**
      * objects to be injected to the plugin
      */
-    private PostType $postType;
+    public PostType $postType;
     private Metabox $metaBox;
     private Shortcode $shortcode;
     private Scripts $scripts;
@@ -71,30 +71,11 @@ class quizzbookPlugin
     private string $postypeName;
     private int $minimunScore;
 
-    function __construct(string $postypeName)
+    function __construct()
     {
-      $this->postypeName=$postypeName;  
-      $this->postType = new PostType($postypeName);  
-    }
-
-    /**
-     * Añade el postype del plugin
-     */
-    function registerPostType()
-    {
-      if($this->postType->argumentsExists() and $this->postType->labelsExists())
-      {
-        register_post_type( $this->postType->getName(), $this->postType->getArguments() );
-      }     
-    }
-
-    /**
-     * Invoca al método para registrar el Posttype en el evento init de wordpress
-     */
-    function initPlugin()
-    {
-      add_action('init', array($this, 'registerPostType'));
-    }  
+      $this->postypeName=QUIZBOOK_POSTTYPE_NAME;  
+      $this->postType = new PostType($this->postypeName);  
+    }    
 
     /**
      * agrega el metabox al plugin
@@ -187,8 +168,8 @@ class quizzbookPlugin
     
 }
  
-$quizbook = new quizzbookPlugin(QUIZBOOK_POSTTYPE_NAME);
-$quizbook->initPlugin();
+$quizbook = new quizzbookPlugin();
+$quizbook->postType->addToPlugin();
 $quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
 $quizbook->addSaveMetaBoxes();
 $quizbook->setShortcode(QUIZBOOK_SHORTCODE_TEMPLATE_PATH);

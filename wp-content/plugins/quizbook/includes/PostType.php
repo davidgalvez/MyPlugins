@@ -30,71 +30,79 @@ class PostType{
     /**
      * Se crea un nuevo objeto enviandule el nombre para el postype
      */
-    function __construct(string $postypeName){
+    function __construct(string $postypeName=QUIZBOOK_POSTTYPE_NAME){
         $this->postypeName=$postypeName;
         $this->setLabels();
         $this->setArguments();
     }
 
     /**
+     * Incluye el PostType al plugin
+     */
+    public function addToPlugin()
+    {
+        add_action('init', array($this, 'registerPostype'));
+    }
+
+    /**
      * Devuelve las etiquetas del posttype
      */
-    function getLabels(){
+    public function getLabels(){
         return $this->labels;
     }
 
     /**
      * Devuelve los argumentos del posttype
      */
-    function getArguments(){
+    public function getArguments(){
         return $this->args;
     }
     
     /**
      * Devuelve el nombre unico del postype
      */
-    function getName(){
+    public function getName(){
         return $this->postypeName;
     } 
 
     /**
      * Registra el posttype con las etiquetas y argumentos
      */
-    function registerPostype(){        
+    public function registerPostype(){        
         if($this->argumentsExists() and $this->labelsExists()){
             register_post_type( $this->postypeName, $this->args );
         }        
     }
 
-    function rewriteFlushPostype(){
+    public function rewriteFlushPostype(){
        	    flush_rewrite_rules();
     }
 
     /**
      * Verifica si se han definido las etiquetas
      */
-    function labelsExists(){
+    public function labelsExists(){
         return ($this->labels!=NULL);
     }
 
     /**
      * Verifica si el posttype está registrado
      */
-    function isRegisteredPostType(){
+    public function isRegisteredPostType(){
         return post_type_exists( $this->postypeName );
     }
 
     /**
      * Verifica si se han definido los argumentos para el posttype
      */
-    function argumentsExists(){
+    public function argumentsExists(){
         return ($this->args!=NULL);
     }
 
     /**
      * Asigna las etiquetas para el posttpe
      */
-    function setLabels(){
+    public function setLabels(){
        $this->labels =array(
             'name'                  => _x( 'Quiz', 'Post type general name', 'quizbook' ),
             'singular_name'         => _x( 'Quiz', 'Post type singular name', 'quizbook' ),
@@ -126,7 +134,7 @@ class PostType{
     /**
      * Asigna los argumentos para el posttype
      */
-    function setArguments(){
+    public function setArguments(){
         $this->args= array(
             'labels'             => $this->labels,
             'public'             => true,
