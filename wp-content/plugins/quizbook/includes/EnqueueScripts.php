@@ -8,7 +8,7 @@ if(! defined('ABSPATH')) exit();
 /**
  * Class to admin scripts and styles of the plugin
  */
-class Scripts
+class EnqueueScripts
 {
     private string $posttype;
     private string $jsFilePath;
@@ -23,10 +23,21 @@ class Scripts
         $this->cssAdminPath=$cssAdminPath;
     }
 
+    
+    /**
+     * Enqueue js scripts and css scripts to front and backend plugin interfaces
+     */
+    public function addToPlugin()
+    {
+        add_action('wp_enqueue_scripts', array($this,'addFrontJsCssFiles'));
+        add_action('admin_enqueue_scripts', array($this,'addAdminJsCssFiles'));
+    }
+
     /**
      * Agrega estilos y js al front end
      */
-    function addFrontJsCssFiles(){
+    function addFrontJsCssFiles()
+    {
         wp_enqueue_style( 'quizbook_css', $this->cssFrontPath);
         wp_enqueue_script( 'quizbook_js', $this->jsFilePath,array('jquery'), 1.0, true);
         wp_localize_script('quizbook_js','admin_url',  array(
@@ -37,7 +48,8 @@ class Scripts
     /**
      * Agrega estilos al admin cuando se crea un quiz
      */
-    function addAdminJsCssFiles(string $hook){
+    function addAdminJsCssFiles(string $hook)
+    {
         global $post;
 
         if($this->isValidHook($hook) and $this->isValidPosttype())
@@ -49,7 +61,8 @@ class Scripts
     /**
      * Valida si el hook que invoca la función es un post o post-new
      */
-    function isValidHook(string $hook){
+    function isValidHook(string $hook)
+    {
         return ($hook == 'post-new.php' || $hook == 'post.php');
     }
 
@@ -57,24 +70,29 @@ class Scripts
     /**
      * Verifica si es el posttype correcto (quizbook)
      */
-    function isValidPosttype(){
+    function isValidPosttype()
+    {
         global $post;
         return ($post->post_type===$this->posttype);
     }
 
-    function getPostTypeName(){
+    function getPostTypeName()
+    {
         return $this->posttype;
     }
 
-    function getJsFilePath(){
+    function getJsFilePath()
+    {
         return $this->jsFilePath;
     }
 
-    function getCssFrontPath(){
+    function getCssFrontPath()
+    {
         return $this->cssFrontPath;
     }
 
-    function getCssAdminPath(){
+    function getCssAdminPath()
+    {
         return $this->cssAdminPath;
     }
 }

@@ -26,7 +26,7 @@ require_once("quizbook-config.php");
 use \Quizbook\PostType;
 use \Quizbook\Metabox;
 use \Quizbook\Shortcode;
-use \Quizbook\Scripts;
+use \Quizbook\EnqueueScripts;
 use \Quizbook\AjaxResults;
 use Quizbook\Activate;
 use Quizbook\Deactivate;
@@ -62,7 +62,7 @@ class quizzbookPlugin
     public PostType $postType;
     public Metabox $metaBox;
     public Shortcode $shortcode;
-    private Scripts $scripts;
+    public EnqueueScripts $enqueueScripts;
     private AjaxResults $ajaxResults;
 
     /**
@@ -71,40 +71,24 @@ class quizzbookPlugin
     private string $postypeName;
     private int $minimunScore;
     private array $metaboxArgs;
-    private string $shortcodePath;  
+    private string $shortcodePath; 
+    private string $jsFilePath; 
+    private string $cssFrontPath; 
+    private string $cssBackPath; 
 
     function __construct()
     {
       $this->postypeName=QUIZBOOK_POSTTYPE_NAME;  
       $this->metaboxArgs=QUIZBOOK_METABOX_ARGS;
-      $this->shortcodePath=QUIZBOOK_SHORTCODE_TEMPLATE_PATH;      
+      $this->shortcodePath=QUIZBOOK_SHORTCODE_TEMPLATE_PATH; 
+      $this->jsFilePath=QUIZBOOK_SCRIPTS_PATH;
+      $this->cssFrontPath=QUIZBOOK_CSS_FRONT_PATH;
+      $this->cssBackPath=QUIZBOOK_CSS_ADMIN_PATH;     
       $this->postType = new PostType($this->postypeName);  
       $this->metaBox=new Metabox($this->metaboxArgs); 
       $this->shortcode= new Shortcode($this->postypeName, $this->shortcodePath);
-    }   
-
-    /**
-     * Asigna el parametro scripts a una instancia de la clase postypeScripts
-     */
-    function setScripts(string $jsFilePath, string $cssFrontPath, string $cssAdminPath){
-      $this->scripts= new Scripts($this->postypeName, $jsFilePath, $cssFrontPath, $cssAdminPath);
-    }
-
-    /**
-     * Registra los scripts del front end para el plugin
-     */
-    function addActionRegisterFrontEndScripts()
-    {
-      add_action('wp_enqueue_scripts', array($this->scripts,'addFrontJsCssFiles'));
-    }
-
-    /**
-     * Registra los scripts del admin para el plugin
-     */
-    function addActionRegisterAdminScripts()
-    {
-      add_action('admin_enqueue_scripts', array($this->scripts,'addAdminJsCssFiles'));
-    }
+      $this->enqueueScripts = new EnqueueScripts($this->postypeName,$this->jsFilePath,$this->cssFrontPath,$this->cssBackPath);
+    }       
 
     /**
      * Asigna el parametro ajaxresults a una instancia de la clase quizbookAjaxResults
@@ -124,9 +108,7 @@ $quizbook = new quizzbookPlugin();
 $quizbook->postType->addToPlugin();
 $quizbook->metaBox->addToPlugin();
 $quizbook->shortcode->addToPlugin();
-$quizbook->setScripts(QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH,QUIZBOOK_CSS_ADMIN_PATH);
-$quizbook->addActionRegisterAdminScripts();
-$quizbook->addActionRegisterFrontEndScripts();
+$quizbook->enqueueScripts->addToPlugin();
 $quizbook->setAjaxResults(QUIZBOOK_MINIMUN_SCORE,QUIZBOOK_MIN_VALID_SCORE, QUIZBOOK_MAX_VALID_SCORE);
 $quizbook->addActionAjaxQuizbookResultados();
 ?>

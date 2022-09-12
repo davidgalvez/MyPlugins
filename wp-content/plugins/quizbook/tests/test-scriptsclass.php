@@ -4,7 +4,7 @@
  *
  * @package Quizbook
  */
-use \Quizbook\Scripts;
+use \Quizbook\EnqueueScripts;
 /**
  * Test logic of Quizbook scrripts class
  */
@@ -13,7 +13,7 @@ class TestQuizScripts extends WP_UnitTestCase {
 	public function setUp():void
     {
 		parent::setUp();        
-		$this->QuizbookScripts=new Scripts(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH, QUIZBOOK_CSS_ADMIN_PATH);        
+		$this->QuizbookScripts=new EnqueueScripts(QUIZBOOK_POSTTYPE_NAME,QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH, QUIZBOOK_CSS_ADMIN_PATH);        
        
     }
 	

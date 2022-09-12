@@ -22,7 +22,7 @@ class Shortcode{
      */
     public function addToPlugin()
     {
-        add_shortcode("quizbook", array($this->shortcode, "createShortCode"));
+        add_shortcode("quizbook", array($this, "createShortCode"));
     }
 
      /**
