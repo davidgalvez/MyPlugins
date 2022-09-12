@@ -17,6 +17,14 @@ class Shortcode{
         $this->templatePath=$templatePath;        
     }
 
+    /**
+     * Add shortcode to plugin
+     */
+    public function addToPlugin()
+    {
+        add_shortcode("quizbook", array($this->shortcode, "createShortCode"));
+    }
+
      /**
      * Crea un shortcode, uso [quizbook preguntas="" orden=""]
      */

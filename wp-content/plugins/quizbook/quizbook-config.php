@@ -1,9 +1,18 @@
 <?php
 
 define("QUIZBOOK_POSTTYPE_NAME","quizes");
+define("QUIZBOOK_ASSETS_BASE_PATH", plugin_dir_path(__FILE__)."assets/");
+define("QUIZBOOK_METABOX_ARGS",array(
+    "id"=>"quizbook_meta_box",
+    "title"=>"Respuestas",
+    "nonce"=>"quizbook_nonce",
+    "template_path"=>QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-metabox.php",
+    "screen"=>'quizes',
+    "context"=>'normal',
+    "priority"=>'high'
+));
 define("QUIZBOOK_METABOX_ID","quizbook_meta_box");
 define("QUIZBOOK_METABOX_TITLE","Respuestas");
-define("QUIZBOOK_ASSETS_BASE_PATH", plugin_dir_path(__FILE__)."assets/");
 define("QUIZBOOK_METABOX_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-metabox.php");
 define("QUIZBOOK_SHORTCODE_TEMPLATE_PATH",QUIZBOOK_ASSETS_BASE_PATH."templates/quizbook-shortcode-tpl.php");
 define("QUIZBOOK_SCRIPTS_PATH",plugins_url('/assets/js/quizbook.js', __FILE__));

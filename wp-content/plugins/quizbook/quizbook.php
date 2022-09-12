@@ -60,8 +60,8 @@ class quizzbookPlugin
      * objects to be injected to the plugin
      */
     public PostType $postType;
-    private Metabox $metaBox;
-    private Shortcode $shortcode;
+    public Metabox $metaBox;
+    public Shortcode $shortcode;
     private Scripts $scripts;
     private AjaxResults $ajaxResults;
 
@@ -70,66 +70,18 @@ class quizzbookPlugin
      */
     private string $postypeName;
     private int $minimunScore;
+    private array $metaboxArgs;
+    private string $shortcodePath;  
 
     function __construct()
     {
       $this->postypeName=QUIZBOOK_POSTTYPE_NAME;  
+      $this->metaboxArgs=QUIZBOOK_METABOX_ARGS;
+      $this->shortcodePath=QUIZBOOK_SHORTCODE_TEMPLATE_PATH;      
       $this->postType = new PostType($this->postypeName);  
-    }    
-
-    /**
-     * agrega el metabox al plugin
-     */
-    function addMetaBox()
-    {      
-      call_user_func_array('add_meta_box',$this->metaBox->getArguments());
-    }
-
-    /**
-     * Asocia la accion add_meta_boxes al metodo para registrar el metabox
-     */
-    function addMetaBoxes(string $metaboxId, string $metaboxTitle, string $metaboxTemplatePath, string $metaboxNonce){
-      $this->metaBox=new Metabox($metaboxId, $metaboxTitle, $metaboxTemplatePath, $metaboxNonce); 
-      add_action( 'add_meta_boxes', array($this,'addMetaBox'));
-    }
-
-    /**
-     * Invoca al metodo de guardar del metabox
-     */
-    function getSaveMetaBox(int $postID)
-    {
-      $this->metaBox->saveMetabox($postID);
-    }
-
-    /**
-     * Asocia la accion save_post al metodo para actualizar los datos del metabox
-     */
-    function addSaveMetaBoxes(){
-      add_action( 'save_post', array($this,'getSaveMetaBox'),10);
-    }
-
-    /**
-     * Asigna el parametro shorcode a una nueva instancia de la clase quizbookShortcode
-     */
-    function setShortcode(string $shortcodePath){
-      $this->shortcode= new Shortcode($this->postypeName, $shortcodePath);
-      
-    }
-
-    /**
-     * Invoca al método para crear el shortcode
-     */
-    function createShortCode(array $attributes){
-      $this->shortcode->createShortcode($attributes);
-      
-    }
-
-    /**
-     * Registra el shortcode en el plugin
-     */
-    function registerShortcode(){
-      add_shortcode("quizbook", array($this->shortcode, "createShortCode"));
-    }
+      $this->metaBox=new Metabox($this->metaboxArgs); 
+      $this->shortcode= new Shortcode($this->postypeName, $this->shortcodePath);
+    }   
 
     /**
      * Asigna el parametro scripts a una instancia de la clase postypeScripts
@@ -170,10 +122,8 @@ class quizzbookPlugin
  
 $quizbook = new quizzbookPlugin();
 $quizbook->postType->addToPlugin();
-$quizbook->addMetaBoxes(QUIZBOOK_METABOX_ID,QUIZBOOK_METABOX_TITLE, QUIZBOOK_METABOX_TEMPLATE_PATH, QUIZBOOK_METABOX_NONCE);
-$quizbook->addSaveMetaBoxes();
-$quizbook->setShortcode(QUIZBOOK_SHORTCODE_TEMPLATE_PATH);
-$quizbook->registerShortcode();
+$quizbook->metaBox->addToPlugin();
+$quizbook->shortcode->addToPlugin();
 $quizbook->setScripts(QUIZBOOK_SCRIPTS_PATH,QUIZBOOK_CSS_FRONT_PATH,QUIZBOOK_CSS_ADMIN_PATH);
 $quizbook->addActionRegisterAdminScripts();
 $quizbook->addActionRegisterFrontEndScripts();

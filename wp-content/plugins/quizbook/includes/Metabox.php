@@ -49,15 +49,45 @@ class Metabox{
      */
     private string $priority;
 
-    function __construct(string $id, string $tittle, string $template, string $nonce, string $screen='quizes', string $context='normal', string $priority='high')
+    /**
+     * @param array $args  Arreglo asociativo de argumentos para crear el metabox el array debería tener los siguientes argumentos:
+     * ("id", "title","template_path", "nonce", "screen", "priority"); 
+     */
+    function __construct(array $args)
     {
-        $this->id=$id;
-        $this->tittle=$tittle;
-        $this->template=rtrim($template, '/');  
-        $this->nonce=$nonce;      
-        $this->screen=$screen;
-        $this->context=$context;
-        $this->priority=$priority;
+        $this->setArguments($args);
+    }
+
+    /**
+     * Asigna los argumentos al metabox
+     */
+    function setArguments($args)
+    {
+        $this->id=$args["id"];
+        $this->tittle=$args["title"];
+        $this->template=rtrim($args["template_path"], '/');  
+        $this->nonce=$args["nonce"];      
+        $this->screen=$args["screen"];
+        $this->context=$args["context"];
+        $this->priority=$args["priority"];
+    }
+
+    /**
+     * Add Metabox actions to plugin using actions add_meta_boxes y save_post
+     */
+    public function addToPlugin()
+    {
+        add_action( 'add_meta_boxes', array($this,'addToMetaboxList'));
+        add_action( 'save_post', array($this,'saveMetabox'),10);
+
+    }
+
+    /**
+     * Add Metabox to metabox list
+     */
+    function addToMetaboxList()
+    {
+        call_user_func_array('add_meta_box',$this->getArguments());
     }
 
     /**
